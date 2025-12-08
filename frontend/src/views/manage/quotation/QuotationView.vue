@@ -39,7 +39,7 @@
       <br/>
       <a-row style="padding-left: 24px;padding-right: 24px;" v-if="materialInfo != null">
         <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">装修信息</span></a-col>
-        <a-col :span="8"><b>装修名称：</b>
+        <a-col :span="8"><b>家装标题：</b>
           {{ materialInfo.name }}
         </a-col>
         <a-col :span="8"><b>装修编号：</b>

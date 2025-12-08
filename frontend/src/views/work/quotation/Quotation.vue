@@ -23,7 +23,7 @@
             </a-col>
             <a-col :md="6" :sm="24">
               <a-form-item
-                label="装修名称"
+                label="家装标题"
                 :labelCol="{span: 5}"
                 :wrapperCol="{span: 18, offset: 1}">
                 <a-input v-model="queryParams.orderName"/>
@@ -164,7 +164,7 @@ export default {
         },
         ellipsis: true
       }, {
-        title: '装修名称',
+        title: '家装标题',
         dataIndex: 'orderName',
         customRender: (text, row, index) => {
           if (text !== null) {

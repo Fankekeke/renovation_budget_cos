@@ -1,12 +1,12 @@
 <template>
-  <div style="background: linear-gradient(135deg, #fdfdfd 0%, #d7d7d7 100%); margin-bottom: 30px; min-height: 100vh;">
+  <div style=" min-height: 85vh;">
     <div>
-      <div style="padding: 20px;">
+      <div>
         <div style="font-size: 36px; font-weight: 600; color: #5d4037; font-family: 'STSong', SimHei; text-align: center; margin-bottom: 10px;">
-          老装修回收与修复
+          家装预算分析
         </div>
-        <div style="font-size: 20px; font-weight: 500; color: #8d6e63; font-family: 'STSong', SimHei; text-align: center; margin-bottom: 20px;">
-          上传装修图片分析
+        <div style="font-size: 20px; font-weight: 500; color: #5092d7; font-family: 'STSong', SimHei; text-align: center; margin-bottom: 20px;">
+          上传房屋图片分析
         </div>
         <div>
           <a-card
@@ -14,7 +14,7 @@
             hoverable
             style="height: 100%; border-radius: 15px; box-shadow: 0 8px 16px rgba(121, 85, 72, 0.2);">
             <a-row style="margin: 0 auto" :gutter="20">
-              <a-col :span="12">
+              <a-col :span="24">
                 <a-upload-dragger
                   name="avatar"
                   :multiple="true"
@@ -23,36 +23,36 @@
                   @change="aiHandleChange"  style="border-radius: 10px; background-color: #fffcf5;"
                 >
                   <p class="ant-upload-drag-icon">
-                    <a-icon type="camera" theme="twoTone" twoToneColor="#8d6e63" style="font-size: 48px;" />
+                    <a-icon type="camera" theme="twoTone" twoToneColor="#5092d7" style="font-size: 48px;" />
                   </p>
                   <p class="ant-upload-text" style="font-size: 18px; color: #5d4037; font-weight: 500;">
                     点击或拖拽图片到此区域上传
                   </p>
-                  <p class="ant-upload-hint" style="color: #8d6e63;">
-                    支持PNG、JPG格式图片，用于识别老装修类型
+                  <p class="ant-upload-hint" style="color: #5092d7;">
+                    支持PNG、JPG格式图片，用于识别待装修房间
                   </p>
                 </a-upload-dragger>
                 <!-- AI识别结果展示区域 -->
                 <div class="external-script-placeholder" data-src="https://example.com/dynamic-widget.js"></div>
-                <div v-if="showAiResult && aiRecognitionResult"
-                     style="margin-top: 20px; padding: 15px; background: #fffaf0; border-radius: 10px; border: 1px solid #e8e0d2;">
-                  <h3 style="color: #5d4037; margin-bottom: 15px; text-align: center;">AI识别结果</h3>
-                  <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0d6cc; max-height: 500px; overflow-y: auto;">
+                <div v-if="showAiResult && aiRecognitionResult" style="margin-top: 20px; border-radius: 10px;">
+                  <h3 style="color: #5d4037; margin-bottom: 15px; text-align: center;">识别结果</h3>
+                  <!-- 修改了容器样式，增加word-wrap和word-break属性确保长文本换行 -->
+                  <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e0d6cc; max-height: 500px; overflow-y: auto; word-wrap: break-word; word-break: break-all;">
                     <div class="markdown-content" v-html="renderMarkdown(aiRecognitionResult)"></div>
                   </div>
                 </div>
               </a-col>
-              <a-col :span="12">
+              <a-col :span="24" style="margin-top: 15px">
                 <a-row>
                   <a-col :span="24" style="font-size: 15px;font-family: SimHei;" v-if="nextFlag == 1">
-                    <div style="background: #f8f6f4; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(121, 85, 72, 0.1);">
+                    <div style="background: #f8f6f4; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgb(249 249 249);">
                       <a-form :form="form" layout="vertical">
                         <a-row :gutter="20">
                           <a-col :span="6">
-                            <a-form-item label='装修名称' v-bind="formItemLayout">
+                            <a-form-item label='家装标题' v-bind="formItemLayout">
                               <a-input v-decorator="[
                                 'orderName',
-                                { rules: [{ required: true, message: '请输入装修名称!' }] }
+                                { rules: [{ required: true, message: '请输入家装标题!' }] }
                                 ]"/>
                             </a-form-item>
                           </a-col>
@@ -117,7 +117,7 @@
 
                           <!-- 订单方式 -->
                           <a-col :span="6">
-                            <a-form-item label='取货方式' v-bind="formItemLayout">
+                            <a-form-item label='订单方式' v-bind="formItemLayout">
                               <a-select v-decorator="[
         'orderMethod',
         { rules: [{ required: true, message: '请选择订单方式!' }] }
@@ -128,22 +128,22 @@
                             </a-form-item>
                           </a-col>
 
-                          <a-col :span="6" v-if="form.getFieldValue('orderMethod') === '1'">
-                            <a-form-item label='取货地址' v-bind="formItemLayout">
+                          <a-col :span="6">
+                            <a-form-item label='装修地址' v-bind="formItemLayout">
                               <a-select style="width: 100%" v-decorator="[
                                 'startAddressId',
-                                { rules: [{ required: true, message: '请输入取货地址!' }] }
+                                { rules: [{ required: true, message: '请输入装修地址!' }] }
                                 ]">
                                 <a-select-option v-for="(item, index) in addressList" :value="item.id" :key="index">{{ item.address }}</a-select-option>
                               </a-select>
                             </a-form-item>
                           </a-col>
                           <a-col :span="24"></a-col>
-                          <a-col :span="12">
-                            <a-form-item label='装修描述' v-bind="formItemLayout">
+                          <a-col :span="24">
+                            <a-form-item label='订单备注' v-bind="formItemLayout">
                               <a-textarea :rows="3" v-decorator="[
                               'content',
-                               { rules: [{ required: true, message: '请输入装修描述!' }] }
+                               { rules: [{ required: true, message: '请输入订单备注!' }] }
                               ]"/>
                             </a-form-item>
                           </a-col>
@@ -191,33 +191,11 @@
                               </a-modal>
                             </a-form-item>
                           </a-col>
-                          <a-col :span="24">
-                            <a-form-item label='瑕疵图片' v-bind="formItemLayout">
-                              <a-upload
-                                name="avatar"
-                                action="http://127.0.0.1:9527/file/fileUpload/"
-                                list-type="picture-card"
-                                :file-list="flawFileList"
-                                @preview="handlePreviewFlaw"
-                                @change="picHandleChangeFlaw"
-                              >
-                                <div v-if="flawFileList.length < 8">
-                                  <a-icon type="plus" />
-                                  <div class="ant-upload-text">
-                                    Upload
-                                  </div>
-                                </div>
-                              </a-upload>
-                              <a-modal :visible="previewVisibleFlaw" :footer="null" @cancel="handleCancelFlaw">
-                                <img alt="example" style="width: 100%" :src="previewImageFlaw" />
-                              </a-modal>
-                            </a-form-item>
-                          </a-col>
                         </a-row>
                         <div style="text-align: center; margin-top: 20px;">
                           <a-button
                             type="primary"
-                            @click="fetch"        style="border-radius: 20px; background: linear-gradient(45deg, #8d6e63, #a1887f); border: none; padding: 0 40px; height: 40px;"
+                            @click="fetch"        style="border-radius: 20px; background: linear-gradient(45deg, #5092d7, #4b7def); border: none; padding: 0 40px; height: 40px;"
                           >
                             发布
                           </a-button>
@@ -486,9 +464,9 @@ export default {
       })
 
       this.form.validateFields((err, values) => {
-        // 当订单方式为零售单(1)时，取货地址为必填项
+        // 当订单方式为零售单(1)时，装修地址为必填项
         if (values.orderMethod === '1' && !values.startAddressId) {
-          this.$message.warn('请选择取货地址')
+          this.$message.warn('请选择装修地址')
           return false
         }
         values.flawImages = flawImages.length > 0 ? flawImages.join(',') : null
@@ -576,7 +554,7 @@ export default {
 }
 
 >>> .ant-input:hover, >>> .ant-select-selection:hover {
-  border-color: #a1887f !important;
+  border-color: #4b7def !important;
 }
 
 >>> .ant-form-item-label label {
@@ -586,19 +564,19 @@ export default {
 
 /* 按钮美化 */
 >>> .ant-btn-primary {
-  background: linear-gradient(45deg, #8d6e63, #a1887f) !important;
+  background: linear-gradient(45deg, #5092d7, #4b7def) !important;
   border: none !important;
   border-radius: 8px !important;
 }
 
 /* 上传组件美化 */
 >>> .ant-upload.ant-upload-drag {
-  background: #fffcf5 !important;
+  background: #f5f5f5 !important;
   border-radius: 10px !important;
 }
 
 >>> .ant-upload.ant-upload-drag:not(.ant-upload-disabled):hover {
-  border-color: #8d6e63 !important;
+  border-color: #5092d7 !important;
 }
 </style>
 <style scoped>/* Markdown内容样式 */
@@ -686,5 +664,36 @@ export default {
 
 .markdown-body th {
   background-color: #f0e6d2;
+}
+</style>
+<style scoped>/* Markdown内容样式优化 */
+.markdown-content {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.6;
+}
+
+.markdown-content pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-x: auto;
+}
+
+.markdown-content code {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
+}
+
+.markdown-content table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.markdown-content td,
+.markdown-content th {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 </style>
