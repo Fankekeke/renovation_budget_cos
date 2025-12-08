@@ -38,11 +38,10 @@
               </div>
 
               <div style="margin-bottom: 8px; display: flex; flex-wrap: wrap; gap: 8px;">
-                <a-tag color="blue">{{ item.goodsType }}</a-tag>
-                <a-tag v-if="item.orderType == 1" color="orange">装修</a-tag>
-                <a-tag v-if="item.orderType == 2" color="purple">回收</a-tag>
-                <a-tag v-if="item.orderMethod == 1" color="cyan">上门</a-tag>
-                <a-tag v-if="item.orderMethod == 2" color="volcano">邮寄</a-tag>
+                <a-tag v-if="item.orderType == 1" color="orange">全包</a-tag>
+                <a-tag v-if="item.orderType == 2" color="purple">半包</a-tag>
+                <a-tag v-if="item.orderMethod == 1" color="cyan">零售单</a-tag>
+                <a-tag v-if="item.orderMethod == 2" color="volcano">工程单</a-tag>
               </div>
 
               <div style="margin-bottom: 8px;">

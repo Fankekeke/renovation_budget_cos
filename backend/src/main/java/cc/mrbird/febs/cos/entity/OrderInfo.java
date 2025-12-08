@@ -46,16 +46,6 @@ public class OrderInfo implements Serializable {
     private String content;
 
     /**
-     * 瑕疵描述
-     */
-    private String flawContent;
-
-    /**
-     * 瑕疵图片
-     */
-    private String flawImages;
-
-    /**
      * 所属用户
      */
     private Integer userId;
@@ -86,7 +76,7 @@ public class OrderInfo implements Serializable {
     private String remark;
 
     /**
-     * 订单状态（0.等待报价 1.未支付 2.维修回收中 3.已完成）
+     * 订单状态（0.等待报价 1.未支付 2.装修中 3.已完成）
      */
     private String status;
 
@@ -101,27 +91,22 @@ public class OrderInfo implements Serializable {
     private String payDate;
 
     /**
-     * 物品类型
-     */
-    private String goodsType;
-
-    /**
-     * 物品图片
+     * 图片
      */
     private String images;
 
     /**
-     * 物品重量
+     * 总面积
      */
     private BigDecimal weight;
 
     /**
-     * 物品高度
+     * 卫生间数量
      */
     private BigDecimal height;
 
     /**
-     * 物品宽度
+     * 房间数量
      */
     private BigDecimal width;
 

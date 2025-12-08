@@ -97,51 +97,42 @@
                       <span v-if="orderData.fixDifficulty == 3">复杂</span>
                     </a-col>
                     <a-col :span="8"><b>订单类型：</b>
-                      <span v-if="orderData.orderType == 1">装修</span>
-                      <span v-if="orderData.orderType == 2">回收</span>
+                      <span v-if="orderData.orderType == 1">全包</span>
+                      <span v-if="orderData.orderType == 2">半包</span>
                     </a-col>
                   </a-row>
                   <br/>
                   <a-row style="padding-left: 24px;padding-right: 24px;">
                     <a-col :span="8"><b>订单方式：</b>
-                      <span v-if="orderData.orderMethod == 1">上门</span>
-                      <span v-if="orderData.orderMethod == 2">邮寄</span>
+                      <span v-if="orderData.orderMethod == 1">零售单</span>
+                      <span v-if="orderData.orderMethod == 2">工程单</span>
                     </a-col>
-                    <a-col :span="8"><b>物件类型：</b>
-                      {{ orderInfo.goodsType ? orderInfo.goodsType : '- -' }}
-                    </a-col>
-                    <a-col :span="8"><b>物件重量：</b>
-                      {{ orderInfo.weight ? orderInfo.weight : '- -' }}KG
+
+                    <a-col :span="8"><b>总面积：</b>
+                      {{ orderInfo.weight ? orderInfo.weight : '- -' }}㎡
                     </a-col>
                   </a-row>
                   <br/>
                   <a-row style="padding-left: 24px;padding-right: 24px;">
-                    <a-col :span="8"><b>物件高度：</b>
-                      {{ orderInfo.height ? orderInfo.height : '- -' }}厘米
+                    <a-col :span="8"><b>卫生间数量：</b>
+                      {{ orderInfo.height ? orderInfo.height : '- -' }}个
                     </a-col>
-                    <a-col :span="8"><b>物件宽度：</b>
-                      {{ orderInfo.width ? orderInfo.width : '- -' }}厘米
+                    <a-col :span="8"><b>房间数量：</b>
+                      {{ orderInfo.width ? orderInfo.width : '- -' }}个
                     </a-col>
                   </a-row>
                 </div>
                 <br/>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">物件描述</span></a-col>
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">装修描述</span></a-col>
                   <a-col :span="24">
                     {{ orderData.content ? orderData.content : '- -' }}
                   </a-col>
                 </a-row>
                 <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">物件瑕疵</span></a-col>
-                  <a-col :span="24">
-                    {{ orderData.flawContent ? orderData.flawContent : '- -' }}
-                  </a-col>
-                </a-row>
-                <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">物件图册</span></a-col>
+                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">装修图册</span></a-col>
                   <a-col :span="24">
                     <a-upload
                       name="avatar"
@@ -188,7 +179,7 @@
                 <br/>
                 <div style="font-size: 13px;font-family: SimHei" v-if="startAddressInfo !== null">
                   <a-row style="padding-left: 24px;padding-right: 24px;">
-                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">物件地址</span></a-col>
+                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">装修地址</span></a-col>
                     <a-col :span="24"><b>详细地址：</b>
                       {{ startAddressInfo.address }}
                     </a-col>
