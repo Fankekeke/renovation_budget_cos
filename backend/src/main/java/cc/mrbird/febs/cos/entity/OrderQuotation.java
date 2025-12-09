@@ -60,6 +60,7 @@ public class OrderQuotation implements Serializable {
      * 报价时间
      */
     private String createDate;
+    private String fixProcessInfo;
 
     /**
      * 订单名称

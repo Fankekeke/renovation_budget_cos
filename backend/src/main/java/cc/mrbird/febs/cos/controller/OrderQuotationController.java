@@ -109,6 +109,10 @@ public class OrderQuotationController {
      */
     @PutMapping
     public R edit(OrderQuotation orderQuotation) {
+        StaffInfo staffInfo = staffInfoService.getOne(Wrappers.<StaffInfo>lambdaQuery().eq(StaffInfo::getUserId, orderQuotation.getStaffId()));
+        if (staffInfo != null) {
+            orderQuotation.setStaffId(staffInfo.getId());
+        }
         return R.ok(orderQuotationService.updateById(orderQuotation));
     }
 

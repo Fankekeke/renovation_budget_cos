@@ -88,6 +88,7 @@ public class OrderInfoController {
         OrderQuotation quotation = orderQuotationService.getById(quotationId);
         OrderInfo orderInfo = orderInfoService.getById(quotation.getOrderId());
         orderInfo.setStaffIds(quotation.getStaffId().toString());
+        orderInfo.setFixProcessInfo(quotation.getFixProcessInfo());
         orderInfo.setTotal(quotation.getPrice());
         orderInfo.setOrderPrice(quotation.getPrice());
         orderInfo.setStatus("1");

@@ -163,25 +163,6 @@
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span
-                    style="font-size: 15px;font-weight: 650;color: #000c17">瑕疵图册</span></a-col>
-                  <a-col :span="24">
-                    <a-upload
-                      name="avatar"
-                      action="http://127.0.0.1:9527/file/fileUpload/"
-                      list-type="picture-card"
-                      :file-list="flawFileList"
-                      @preview="handlePreviewFlaw"
-                      @change="picHandleChangeFlaw"
-                    >
-                    </a-upload>
-                    <a-modal :visible="previewVisibleFlaw" :footer="null" @cancel="handleCancelFlaw">
-                      <img alt="example" style="width: 100%" :src="previewImageFlaw"/>
-                    </a-modal>
-                  </a-col>
-                </a-row>
-                <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;" v-if="orderData && orderData.video != null">
                   <a-col style="margin-bottom: 15px"><span
                     style="font-size: 15px;font-weight: 650;color: #000c17">视频</span></a-col>
@@ -319,13 +300,11 @@
           <a-row :gutter="15" style="padding: 20px" v-if="orderData != null">
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px" v-if="orderData.status == 0">
               <div v-if="quotationList && quotationList.length > 0">
-                <h3
-                  style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
-                  报价信息</h3>
+                <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">报价信息</h3>
                 <a-list :data-source="quotationList" item-layout="vertical">
                   <a-list-item slot="renderItem" slot-scope="item"
                                style="padding: 20px 0; border-bottom: 1px dashed #e8e8e8;">
-                    <a-card style="width: 100%; border-radius: 2px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <a-card style="width: 100%; border-radius: 2px;">
                       <a-row :gutter="16">
                         <a-col :span="24">
                           <div style="display: flex; align-items: center; margin-bottom: 15px;">
@@ -384,6 +363,31 @@
                       <!-- 添加确认报价按钮 -->
                       <a-row style="margin-top: 15px;">
                         <a-col :span="24" style="text-align: right;">
+                          <a-popover>
+                            <template slot="content">
+                              <div>
+                                <a-timeline style="margin-top: 20px;">
+                                  <a-timeline-item
+                                    v-for="(step, index) in JSON.parse(item.fixProcessInfo)"
+                                    :key="step.id"
+                                    :color="getStepColor(step.status)">
+                                    <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>
+                                    <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
+                                    <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
+                                    <p v-if="step.itemPrice" style="margin-top: 8px;">
+                                  <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                                    预计价格: {{ step.itemPrice }} 元
+                                  </span>
+                                      <span v-if="step.workHours" style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                                    预计工时: {{ step.workHours }} 时
+                                  </span>
+                                    </p>
+                                  </a-timeline-item>
+                                </a-timeline>
+                              </div>
+                            </template>
+                            <a-button type="default" class="action-btn">装修步骤</a-button>
+                          </a-popover>
                           <a-button type="default" class="action-btn" @click="goToChat(item)">
                             <a-icon type="message"/>
                             在线沟通
@@ -531,7 +535,7 @@
             </a-col>
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px" v-if="repairSteps.length !== 0">
               <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
-                修复流程
+                装修流程
               </h3>
               <a-timeline style="margin-top: 20px;">
                 <a-timeline-item
@@ -833,7 +837,6 @@ export default {
         this.staffInfo = r.data.staff
         this.evaluateInfo = r.data.evaluate
         this.imagesInit(this.orderInfo.images)
-        this.flawImagesInit(this.orderInfo.flawImages)
         this.queryQuotationByOrder()
         this.queryRepairStep(orderId)
         if (this.endAddressInfo != null && this.orderData.logisticsInfo != null) {

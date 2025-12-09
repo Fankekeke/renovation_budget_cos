@@ -307,6 +307,73 @@
               </div>
             </a-col>
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px">
+              <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+                装修流程
+              </h3>
+              <a-timeline style="margin-top: 20px;">
+                <a-timeline-item
+                  v-for="(step, index) in repairSteps"
+                  :key="step.id"
+                  :color="getStepColor(step.status)">
+                  <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>
+                  <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
+                  <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
+                  <p v-if="step.itemPrice" style="margin-top: 8px;">
+                    <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                      预计价格: {{ step.itemPrice }} 元
+                    </span>
+                                      <span v-if="step.workHours" style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                      预计工时: {{ step.workHours }} 时
+                    </span>
+                  </p>
+                </a-timeline-item>
+              </a-timeline>
+              <div style="margin-top: 20px; text-align: right;" v-if="orderData.finishDate == null">
+                <a-button type="primary" icon="plus" @click="showAddStepForm = true">
+                  添加步骤
+                </a-button>
+              </div>
+
+              <a-modal
+                title="添加装修步骤"
+                :visible="showAddStepForm"
+                @ok="addRepairStep"
+                @cancel="showAddStepForm = false"
+                width="600px">
+                <a-form :form="stepForm" layout="vertical">
+                  <a-row :gutter="15">
+                    <a-col :span="24">
+                      <a-form-item label="装修步骤">
+                        <a-input
+                          v-decorator="['title', { rules: [{ required: true, message: '请输入装修步骤' }] }]"
+                          placeholder="请输入装修步骤" />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :span="24">
+                      <a-form-item label="步骤描述">
+                        <a-textarea
+                          v-decorator="['description', { rules: [{ required: true, message: '请输入步骤描述' }] }]"
+                          placeholder="请输入步骤描述"
+                          :rows="3" />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                      <a-form-item label="预计价格">
+                        <a-input-number style="width: 100%" id="inputNumber" v-decorator="['itemPrice', { rules: [{ required: true, message: '请输入预计价格' }] }]"
+                                        placeholder="请输入预计价格" :min="1" />
+                      </a-form-item>
+                    </a-col>
+                    <a-col :span="12">
+                      <a-form-item label="预计工时">
+                        <a-input-number style="width: 100%" id="inputNumber" v-decorator="['workHours', { rules: [{ required: true, message: '请输入预计工时' }] }]"
+                                        placeholder="请输入预计工时" :min="1" />
+                      </a-form-item>
+                    </a-col>
+                  </a-row>
+                </a-form>
+              </a-modal>
+            </a-col>
+            <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px">
               <div style="font-size: 13px;font-family: SimHei">
                 <a-row style="padding-left: 24px;padding-right: 24px;">
                   <a-col style="margin-bottom: 15px">
@@ -371,7 +438,7 @@
                       </a-row>
                       <a-row :gutter="16" v-if="orderData.status == 0">
                         <a-col :span="24" style="text-align: right">
-                          <a-button type="primary" @click="submitQuote">提交报价</a-button>
+                          <a-button type="primary" icon="plus" @click="submitQuote">提交报价</a-button>
                         </a-col>
                       </a-row>
                     </a-form>
@@ -379,71 +446,6 @@
                 </a-row>
               </div>
             </a-col>
-            <a-col :span="24" v-if="orderData.deliveryDate == null && orderData.logisticsInfo != null" style="margin-top: 15px;background: #fff;padding: 20px">
-              <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
-                物流信息
-              </h3>
-              <div v-if="orderData.logisticsInfo" style="padding: 15px; background: #f5f5f5; border-radius: 4px; margin-bottom: 20px;">
-                <a-row :gutter="16">
-                  <a-col :span="8"><b>物流公司：</b>{{ JSON.parse(orderData.logisticsInfo).company }}</a-col>
-                  <a-col :span="8"><b>物流单号：</b>{{ JSON.parse(orderData.logisticsInfo).trackingNumber }}</a-col>
-                  <a-col :span="8"><b>备注信息：</b>{{ JSON.parse(orderData.logisticsInfo).remark }}</a-col>
-                </a-row>
-              </div>
-              <a-button type="primary" @click="confirmReceipt">确认收货</a-button>
-            </a-col>
-<!--            <a-col :span="24" v-else style="margin-top: 15px;background: #fff;padding: 20px">-->
-<!--              <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">-->
-<!--                修复流程-->
-<!--              </h3>-->
-<!--              <a-timeline style="margin-top: 20px;">-->
-<!--                <a-timeline-item-->
-<!--                  v-for="(step, index) in repairSteps"-->
-<!--                  :key="step.id"-->
-<!--                  :color="getStepColor(step.status)">-->
-<!--                  <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>-->
-<!--                  <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>-->
-<!--                  <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>-->
-<!--                </a-timeline-item>-->
-<!--              </a-timeline>-->
-<!--              <div style="margin-top: 20px; text-align: right;" v-if="orderData.finishDate == null">-->
-<!--                <a-button type="primary" v-if="repairSteps.length > 0" @click="completeRepair">-->
-<!--                  装修完成-->
-<!--                </a-button>-->
-<!--                <a-button type="primary" icon="plus" @click="showAddStepForm = true">-->
-<!--                  添加步骤-->
-<!--                </a-button>-->
-<!--              </div>-->
-
-<!--              <a-modal-->
-<!--                title="添加装修步骤"-->
-<!--                :visible="showAddStepForm"-->
-<!--                @ok="addRepairStep"-->
-<!--                @cancel="showAddStepForm = false"-->
-<!--                width="600px">-->
-<!--                <a-form :form="stepForm" layout="vertical">-->
-<!--                  <a-form-item label="步骤标题">-->
-<!--                    <a-input-->
-<!--                      v-decorator="['title', { rules: [{ required: true, message: '请输入步骤标题' }] }]"-->
-<!--                      placeholder="请输入步骤标题" />-->
-<!--                  </a-form-item>-->
-<!--                  <a-form-item label="步骤描述">-->
-<!--                    <a-textarea-->
-<!--                      v-decorator="['description', { rules: [{ required: true, message: '请输入步骤描述' }] }]"-->
-<!--                      placeholder="请输入步骤描述"-->
-<!--                      :rows="3" />-->
-<!--                  </a-form-item>-->
-<!--                  <a-form-item label="状态">-->
-<!--                    <a-select-->
-<!--                      v-decorator="['status', { rules: [{ required: true, message: '请选择状态' }], initialValue: 'pending' }]">-->
-<!--                      <a-select-option value="completed">已完成</a-select-option>-->
-<!--                      <a-select-option value="in-progress">进行中</a-select-option>-->
-<!--                      <a-select-option value="pending">待处理</a-select-option>-->
-<!--                    </a-select>-->
-<!--                  </a-form-item>-->
-<!--                </a-form>-->
-<!--              </a-modal>-->
-<!--            </a-col>-->
           </a-row>
         </a-col>
       </a-row>
@@ -604,19 +606,22 @@ export default {
             time: this.formatDate(new Date()),
             title: values.title,
             description: values.description,
-            status: values.status
+            workHours: values.workHours,
+            itemPrice: values.itemPrice,
+            status: 'completed'
           }
           this.repairSteps.push(newStep)
-
-          this.$put(`/cos/order-info/setRepairStep`, {
-            id: this.orderInfo.id,
-            fixProcessInfo: JSON.stringify(this.repairSteps)
-          }).then((r) => {
-            this.queryRepairStep(this.orderInfo.id)
-            this.stepForm.resetFields()
-            this.showAddStepForm = false
-            this.$message.success('步骤添加成功')
-          })
+          this.showAddStepForm = false
+          this.stepForm.resetFields()
+          // this.$put(`/cos/order-info/setRepairStep`, {
+          //   id: this.orderInfo.id,
+          //   fixProcessInfo: JSON.stringify(this.repairSteps)
+          // }).then((r) => {
+          //   this.queryRepairStep(this.orderInfo.id)
+          //   this.stepForm.resetFields()
+          //   this.showAddStepForm = false
+          //   this.$message.success('步骤添加成功')
+          // })
         }
       })
     },
@@ -659,6 +664,10 @@ export default {
       })
     },
     submitQuote () {
+      if (this.repairSteps.length === 0) {
+        this.$message.error('请添加装修步骤')
+        return false
+      }
       this.quoteForm.validateFields((err, values) => {
         if (!err) {
           const quoteData = {
@@ -667,7 +676,8 @@ export default {
             price: values.price,
             workHour: values.workHour,
             content: values.content,
-            staffId: this.currentUser.userId
+            staffId: this.currentUser.userId,
+            fixProcessInfo: JSON.stringify(this.repairSteps)
           }
 
           if (this.rowId != null) {
@@ -695,6 +705,10 @@ export default {
         staffId: this.currentUser.userId
       }).then(response => {
         this.setFormValues(response.data.data)
+        if (response.data.data.fixProcessInfo) {
+          let repairStep = JSON.parse(response.data.data.fixProcessInfo)
+          this.repairSteps = repairStep
+        }
       })
     },
     setFormValues ({...quotation}) {
@@ -769,7 +783,6 @@ export default {
         this.staffInfo = r.data.staff
         this.evaluateInfo = r.data.evaluate
         this.imagesInit(this.orderInfo.images)
-        this.flawImagesInit(this.orderInfo.flawImages)
         this.queryQuotationByOrder()
         this.queryRepairStep(orderId)
         setTimeout(() => {

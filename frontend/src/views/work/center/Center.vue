@@ -94,11 +94,6 @@
       :orderShow="orderMapView.visiable"
       :orderData="orderMapView.data">
     </MapView>
-    <MapRecycleView
-      @close="handleorderRecycleMapViewClose"
-      :orderShow="orderRecycleMapView.visiable"
-      :orderData="orderRecycleMapView.data">
-    </MapRecycleView>
   </div>
 </template>
 
@@ -106,7 +101,6 @@
 import {mapState} from 'vuex'
 import moment from 'moment'
 import MapView from '../../manage/map/Map.vue'
-import MapRecycleView from '../../manage/map/MapRecycle.vue'
 import OrderView from './OrderView.vue'
 
 moment.locale('zh-cn')
@@ -126,7 +120,7 @@ const formItemLayout = {
 }
 export default {
   name: 'User',
-  components: {MapView, OrderView, MapRecycleView},
+  components: {MapView, OrderView},
   computed: {
     ...mapState({
       currentUser: state => state.account.user
@@ -162,13 +156,8 @@ export default {
   methods: {
     moment,
     orderMapOpen (row) {
-      if (row.orderType == 1) {
-        this.orderMapView.data = row
-        this.orderMapView.visiable = true
-      } else {
-        this.orderRecycleMapView.data = row
-        this.orderRecycleMapView.visiable = true
-      }
+      this.orderMapView.data = row
+      this.orderMapView.visiable = true
     },
     toggleContent(orderId) {
       this.$set(this.expandedItems, orderId, !this.expandedItems[orderId]);

@@ -483,7 +483,7 @@
             </a-col>
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px" v-if="repairSteps.length !== 0">
               <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
-                修复流程
+                装修流程
               </h3>
               <a-timeline style="margin-top: 20px;">
                 <a-timeline-item
@@ -775,7 +775,6 @@ export default {
         this.staffInfo = r.data.staff
         this.evaluateInfo = r.data.evaluate
         this.imagesInit(this.orderInfo.images)
-        this.flawImagesInit(this.orderInfo.flawImages)
         this.queryQuotationByOrder()
         this.queryRepairStep(orderId)
         if (this.endAddressInfo != null && this.orderData.logisticsInfo != null) {
