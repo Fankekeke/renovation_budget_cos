@@ -78,6 +78,18 @@ public class OrderInfoController {
     }
 
     /**
+     * 订单设置维修步骤
+     *
+     * @param renovationProcess 装修流程
+     * @param orderId           订单ID
+     * @return 结果
+     */
+    @GetMapping("/orderSetRenovationProcess")
+    public R orderSetRenovationProcess(String renovationProcess, Integer orderId) {
+        return R.ok();
+    }
+
+    /**
      * 确认报价信息
      *
      * @param quotationId 报价ID
@@ -304,7 +316,7 @@ public class OrderInfoController {
         TokenizerEngine engine = TokenizerUtil.createEngine();
         //解析文本
         Result result = engine.parse(orderInfo.getOrderName());
-        String resultStr = CollUtil.join((Iterator<Word>)result, ",");
+        String resultStr = CollUtil.join((Iterator<Word>) result, ",");
         orderInfo.setTagList(resultStr);
         return R.ok(orderInfoService.save(orderInfo));
     }

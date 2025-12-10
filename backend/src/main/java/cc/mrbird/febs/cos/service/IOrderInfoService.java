@@ -44,6 +44,15 @@ public interface IOrderInfoService extends IService<OrderInfo> {
     boolean checkOrder(Integer orderId, Integer staffId);
 
     /**
+     * 修改订单进度
+     *
+     * @param renovationProcess 修改进度
+     * @param orderId           订单ID
+     * @return 订单进度
+     */
+    boolean orderSetRenovationProcess(String renovationProcess, Integer orderId);
+
+    /**
      * 查询收益记录详情
      *
      * @param incomeId 记录ID

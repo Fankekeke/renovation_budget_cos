@@ -9,6 +9,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -50,6 +51,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private final IMailService mailService;
 
     private final IBulletinInfoService bulletinInfoService;
+
+    private final IMessageInfoService messageInfoService;
 
     /**
      * 分页获取订单信息
@@ -144,6 +147,37 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
 
         return this.update(Wrappers.<OrderInfo>lambdaUpdate().set(OrderInfo::getStaffIds, staffInfo.getId()).set(OrderInfo::getStatus, 1).eq(OrderInfo::getId, orderId));
+    }
+
+    /**
+     * 修改订单进度
+     *
+     * @param renovationProcess 修改进度
+     * @param orderId           订单ID
+     * @return 订单进度
+     */
+    @Override
+    public boolean orderSetRenovationProcess(String renovationProcess, Integer orderId) {
+        OrderInfo orderInfo = this.getById(orderId);
+        UserInfo userInfo = userInfoService.getById(orderInfo.getUserId());
+
+        List<MessageInfo> messageInfoList = new ArrayList<>();
+        List<RenovationProcess> renovationProcessList = JSONUtil.toList(renovationProcess, RenovationProcess.class);
+        if (CollectionUtil.isEmpty(renovationProcessList)) {
+            return false;
+        }
+        List<RenovationProcess> processList = renovationProcessList.stream().filter(e -> "1".equals(e.getOverFlag())).collect(Collectors.toList());
+        if (CollectionUtil.isNotEmpty(processList)) {
+            RenovationProcess process = processList.get(0);
+            if (process.getActualItemPrice().compareTo(process.getItemPrice()) > 0) {
+                MessageInfo messageInfo = new MessageInfo(userInfo.getUserId(), "您的订单 " + orderInfo.getOrderName() + "，" + process.getTitle() + "实际使用超出预算，预算：" + process.getItemPrice() + "，实际：" + process.getActualItemPrice() + "，请及时查看", DateUtil.formatDateTime(new Date()), 0);
+                messageInfoList.add(messageInfo);
+            }
+        }
+        MessageInfo messageInfo = new MessageInfo(userInfo.getUserId(), "您的订单 " + orderInfo.getOrderName() + " 进度有更新，请及时查看", DateUtil.formatDateTime(new Date()), 0);
+        messageInfoList.add(messageInfo);
+        messageInfoService.saveBatch(messageInfoList);
+        return this.update(Wrappers.<OrderInfo>lambdaUpdate().set(OrderInfo::getFixProcessInfo, renovationProcess).eq(OrderInfo::getId, orderId));
     }
 
     /**
