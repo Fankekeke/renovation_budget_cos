@@ -30,6 +30,9 @@ public class OrderInfo implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
 
+    @TableField(exist = false)
+    private Integer stepId;
+
     /**
      * 订单编号
      */

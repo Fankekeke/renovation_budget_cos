@@ -152,24 +152,6 @@
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">瑕疵图册</span></a-col>
-                  <a-col :span="24">
-                    <a-upload
-                      name="avatar"
-                      action="http://127.0.0.1:9527/file/fileUpload/"
-                      list-type="picture-card"
-                      :file-list="flawFileList"
-                      @preview="handlePreviewFlaw"
-                      @change="picHandleChangeFlaw"
-                    >
-                    </a-upload>
-                    <a-modal :visible="previewVisibleFlaw" :footer="null" @cancel="handleCancelFlaw">
-                      <img alt="example" style="width: 100%" :src="previewImageFlaw" />
-                    </a-modal>
-                  </a-col>
-                </a-row>
-                <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;" v-if="orderData && orderData.video != null">
                   <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">视频</span></a-col>
                   <a-col :span="24">
@@ -401,19 +383,40 @@
                   v-for="(step, index) in repairSteps"
                   :key="step.id"
                   :color="getStepColor(step.status)">
-                  <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>
                   <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
                   <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
+                  <p v-if="step.itemPrice" style="margin-top: 8px;">
+                                          <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                                            预计价格: {{ step.itemPrice }} 元
+                                          </span>
+                    <span v-if="step.workHours" style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                                            预计工时: {{ step.workHours }} 时
+                                          </span>
+                  </p>
+                  <div v-if="orderData.status == 2">
+                    <div style="margin-top: 10px;">
+                      <a-input-number
+                        v-model="step.actualItemPrice"
+                        placeholder="实际花费金额"
+                        :min="0"
+                        style="width: 150px; margin-right: 10px;"
+                      />
+                      <a-button type="primary" @click="submitactualItemPrice(step)">提交</a-button>
+                    </div>
+<!--                    <div v-else style="margin-top: 10px;">-->
+<!--                      <span style="font-weight: bold; color: #52c41a;">实际花费: {{ step.actualItemPrice }} 元</span>-->
+<!--                    </div>-->
+                  </div>
                 </a-timeline-item>
               </a-timeline>
-              <div style="margin-top: 20px; text-align: right;" v-if="orderData.finishDate == null">
-                <a-button type="primary" v-if="repairSteps.length > 0" @click="completeRepair">
-                  装修完成
-                </a-button>
-                <a-button type="primary" icon="plus" @click="showAddStepForm = true">
-                  添加步骤
-                </a-button>
-              </div>
+<!--              <div style="margin-top: 20px; text-align: right;" v-if="orderData.finishDate == null">-->
+<!--                <a-button type="primary" v-if="repairSteps.length > 0" @click="completeRepair">-->
+<!--                  装修完成-->
+<!--                </a-button>-->
+<!--                <a-button type="primary" icon="plus" @click="showAddStepForm = true">-->
+<!--                  添加步骤-->
+<!--                </a-button>-->
+<!--              </div>-->
 
               <a-modal
                 title="添加装修步骤"
@@ -560,6 +563,37 @@ export default {
     }
   },
   methods: {
+    submitactualItemPrice (step) {
+      if (step.actualItemPrice === undefined || step.actualItemPrice === null || step.actualItemPrice < 0) {
+        this.$message.warning('请输入有效的实际花费金额')
+        return
+      }
+
+      this.$confirm({
+        title: '确认提交',
+        content: `确认提交实际花费金额 ${step.actualItemPrice} 元吗？`,
+        okText: '确认',
+        cancelText: '取消',
+        onOk: () => {
+          console.log(JSON.stringify(this.repairSteps))
+          // 发送请求更新步骤的实际花费
+          this.$post(`/cos/order-info/orderSetRenovationProcess`, {
+            fixProcessInfo: JSON.stringify(this.repairSteps),
+            stepId: step.id,
+            id: this.orderData.id
+          }).then((r) => {
+            // 更新本地数据
+            step.actualItemPrice = step.actualItemPrice
+            this.$message.success('实际花费金额提交成功')
+
+            // 重新查询维修步骤以同步数据
+            this.queryRepairStep(this.orderInfo.id)
+          }).catch((e) => {
+            this.$message.error('提交失败: ' + e.message || '系统错误')
+          })
+        }
+      })
+    },
     completeRepair () {
       this.$confirm({
         title: '确认装修完成',
@@ -592,6 +626,16 @@ export default {
       this.$get(`/cos/order-info/queryRepairStep/${orderId}`).then((r) => {
         if (r.data.msg) {
           let repairStep = JSON.parse(r.data.msg)
+          // 初始化每个步骤的输入值
+          repairStep.forEach(step => {
+            // 如果已有实际花费金额，则不显示输入框
+            if (step.actualItemPrice !== undefined && step.actualItemPrice !== null) {
+              // 已有实际花费金额
+            } else {
+              // 添加临时输入字段
+              this.$set(step, 'actualItemPrice', undefined)
+            }
+          })
           this.repairSteps = repairStep
         } else {
           this.repairSteps = []

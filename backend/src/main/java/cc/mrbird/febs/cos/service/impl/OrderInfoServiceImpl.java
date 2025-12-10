@@ -157,7 +157,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
      * @return 订单进度
      */
     @Override
-    public boolean orderSetRenovationProcess(String renovationProcess, Integer orderId) {
+    public boolean orderSetRenovationProcess(String renovationProcess, Integer orderId, Integer stepId) {
         OrderInfo orderInfo = this.getById(orderId);
         UserInfo userInfo = userInfoService.getById(orderInfo.getUserId());
 
@@ -166,7 +166,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (CollectionUtil.isEmpty(renovationProcessList)) {
             return false;
         }
-        List<RenovationProcess> processList = renovationProcessList.stream().filter(e -> "1".equals(e.getOverFlag())).collect(Collectors.toList());
+        List<RenovationProcess> processList = renovationProcessList.stream().filter(e -> stepId.equals(e.getId())).collect(Collectors.toList());
         if (CollectionUtil.isNotEmpty(processList)) {
             RenovationProcess process = processList.get(0);
             if (process.getActualItemPrice().compareTo(process.getItemPrice()) > 0) {

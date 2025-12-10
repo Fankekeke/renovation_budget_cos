@@ -50,7 +50,7 @@ public interface IOrderInfoService extends IService<OrderInfo> {
      * @param orderId           订单ID
      * @return 订单进度
      */
-    boolean orderSetRenovationProcess(String renovationProcess, Integer orderId);
+    boolean orderSetRenovationProcess(String renovationProcess, Integer orderId, Integer stepId);
 
     /**
      * 查询收益记录详情

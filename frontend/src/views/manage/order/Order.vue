@@ -63,7 +63,7 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon v-if="record.status != 1" type="cluster" @click="orderMapOpen(record)" title="地 图" style="margin-left: 15px"></a-icon>
+          <a-icon v-if="record.status != 1" type="cluster" @click="orderMapOpen(record)" title="详 情" style="margin-left: 15px"></a-icon>
         </template>
       </a-table>
     </div>

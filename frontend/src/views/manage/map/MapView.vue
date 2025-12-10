@@ -148,25 +148,6 @@
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">瑕疵图册</span></a-col>
-                  <a-col :span="24">
-                    <a-upload
-                      name="avatar"
-                      action="http://127.0.0.1:9527/file/fileUpload/"
-                      list-type="picture-card"
-                      :file-list="flawFileList"
-                      @preview="handlePreviewFlaw"
-                      @change="picHandleChangeFlaw"
-                    >
-                    </a-upload>
-                    <a-modal :visible="previewVisibleFlaw" :footer="null" @cancel="handleCancelFlaw">
-                      <img alt="example" style="width: 100%" :src="previewImageFlaw" />
-                    </a-modal>
-                  </a-col>
-                </a-row>
-                <br/>
-                <br/>
                 <div style="font-size: 13px;font-family: SimHei" v-if="startAddressInfo !== null">
                   <a-row style="padding-left: 24px;padding-right: 24px;">
                     <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">装修地址</span></a-col>
@@ -434,7 +415,6 @@ export default {
         this.staffInfo = r.data.staff
         this.evaluateInfo = r.data.evaluate
         this.imagesInit(this.orderInfo.images)
-        this.flawImagesInit(this.orderInfo.flawImages)
         setTimeout(() => {
           baiduMap.initMap('areas')
           this.getLocal()

@@ -63,7 +63,7 @@
           </template>
         </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon v-if="record.status != 1" type="cluster" @click="orderMapOpen(record)" title="地 图" style="margin-left: 15px"></a-icon>
+          <a-icon v-if="record.status != 1" type="cluster" @click="orderMapOpen(record)" title="详 情" style="margin-left: 15px"></a-icon>
           <a-icon v-if="record.status == 1" type="alipay" @click="handleorderMapPayOpen(record)" title="支 付" style="margin-left: 15px"></a-icon>
           <a-icon v-if="record.status == 2 && record.finishDate !== null" type="check" @click="orderComplete(record)" title="订单完成" style="margin-left: 15px"></a-icon>
           <a-icon v-if="record.evaluateId == null && record.status == 3" type="reconciliation" theme="twoTone" twoToneColor="#4a9ff5" @click="orderEvaluateOpen(record)" title="评 价" style="margin-left: 15px"></a-icon>

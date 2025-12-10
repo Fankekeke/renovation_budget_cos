@@ -80,13 +80,12 @@ public class OrderInfoController {
     /**
      * 订单设置维修步骤
      *
-     * @param renovationProcess 装修流程
-     * @param orderId           订单ID
+     * @param orderInfo 订单信息
      * @return 结果
      */
-    @GetMapping("/orderSetRenovationProcess")
-    public R orderSetRenovationProcess(String renovationProcess, Integer orderId) {
-        return R.ok();
+    @PostMapping("/orderSetRenovationProcess")
+    public R orderSetRenovationProcess(OrderInfo orderInfo) {
+        return R.ok(orderInfoService.orderSetRenovationProcess(orderInfo.getFixProcessInfo(), orderInfo.getId(), orderInfo.getStepId()));
     }
 
     /**

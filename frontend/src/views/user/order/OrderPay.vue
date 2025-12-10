@@ -149,24 +149,6 @@
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">瑕疵图册</span></a-col>
-                  <a-col :span="24">
-                    <a-upload
-                      name="avatar"
-                      action="http://127.0.0.1:9527/file/fileUpload/"
-                      list-type="picture-card"
-                      :file-list="flawFileList"
-                      @preview="handlePreviewFlaw"
-                      @change="picHandleChangeFlaw"
-                    >
-                    </a-upload>
-                    <a-modal :visible="previewVisibleFlaw" :footer="null" @cancel="handleCancelFlaw">
-                      <img alt="example" style="width: 100%" :src="previewImageFlaw" />
-                    </a-modal>
-                  </a-col>
-                </a-row>
-                <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;" v-if="orderData && orderData.video != null">
                   <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">视频</span></a-col>
                   <a-col :span="24">
@@ -349,6 +331,40 @@
                             <div style="font-weight: 600; margin-bottom: 8px;">报价说明：</div>
                             <div style="background: #fafafa; padding: 12px;border-left: 3px solid #1890ff;">
                               {{ item.content }}
+                            </div>
+                          </div>
+                        </a-col>
+                      </a-row>
+
+                      <a-row style="margin-top: 15px;">
+                        <a-col :span="24">
+                          <div style="font-size: 14px; color: #595959;">
+                            <div style="font-weight: 600; margin-bottom: 8px;">装修步骤：</div>
+                            <div style="background: #fafafa; padding: 12px;border-left: 3px solid #1890ff;">
+                              <a-popover>
+                                <template slot="content">
+                                  <div>
+                                    <a-timeline style="margin-top: 20px;">
+                                      <a-timeline-item
+                                        v-for="(step, index) in JSON.parse(orderData.fixProcessInfo)"
+                                        :key="step.id"
+                                        :color="getStepColor(step.status)">
+                                        <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
+                                        <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
+                                        <p v-if="step.itemPrice" style="margin-top: 8px;">
+                                          <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                                            预计价格: {{ step.itemPrice }} 元
+                                          </span>
+                                                  <span v-if="step.workHours" style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                                            预计工时: {{ step.workHours }} 时
+                                          </span>
+                                        </p>
+                                      </a-timeline-item>
+                                    </a-timeline>
+                                  </div>
+                                </template>
+                                <a-button type="default" class="action-btn">装修步骤</a-button>
+                              </a-popover>
                             </div>
                           </div>
                         </a-col>
@@ -554,23 +570,17 @@ export default {
     }
   },
   methods: {
-    orderPay () {
-      let data = { outTradeNo: this.orderData.code, subject: `${this.orderData.createDate}缴费信息`, totalAmount: this.finalPrice, body: '', discountId: this.selectedDiscount ? this.selectedDiscount.id : null }
-      console.log(data)
-      // this.$post('/cos/pay/test', data).then((r) => {
-      //   // console.log(r.data.msg)
-      //   // 添加之前先删除一下，如果单页面，页面不刷新，添加进去的内容会一直保留在页面中，二次调用form表单会出错
-      //   const divForm = document.getElementsByTagName('div')
-      //   if (divForm.length) {
-      //     document.body.removeChild(divForm[0])
-      //   }
-      //   const div = document.createElement('div')
-      //   div.innerHTML = r.data.msg // data就是接口返回的form 表单字符串
-      //   // console.log(div.innerHTML)
-      //   document.body.appendChild(div)
-      //   document.forms[0].setAttribute('target', '_self') // 新开窗口跳转
-      //   document.forms[0].submit()
-      // })
+    getStepColor (status) {
+      switch (status) {
+        case 'completed':
+          return 'green'
+        case 'in-progress':
+          return 'blue'
+        case 'pending':
+          return 'gray'
+        default:
+          return 'gray'
+      }
     },
     calculateFinalPrice () {
       // 查找选中的优惠券
@@ -728,7 +738,6 @@ export default {
         this.staffInfo = r.data.staff
         this.evaluateInfo = r.data.evaluate
         this.imagesInit(this.orderInfo.images)
-        this.flawImagesInit(this.orderInfo.flawImages)
         this.queryQuotationByOrder()
         this.queryDiscountByUser(this.orderInfo.orderPrice)
         setTimeout(() => {

@@ -152,24 +152,6 @@
                   </a-col>
                 </a-row>
                 <br/>
-                <a-row style="padding-left: 24px;padding-right: 24px;">
-                  <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">瑕疵图册</span></a-col>
-                  <a-col :span="24">
-                    <a-upload
-                      name="avatar"
-                      action="http://127.0.0.1:9527/file/fileUpload/"
-                      list-type="picture-card"
-                      :file-list="flawFileList"
-                      @preview="handlePreviewFlaw"
-                      @change="picHandleChangeFlaw"
-                    >
-                    </a-upload>
-                    <a-modal :visible="previewVisibleFlaw" :footer="null" @cancel="handleCancelFlaw">
-                      <img alt="example" style="width: 100%" :src="previewImageFlaw" />
-                    </a-modal>
-                  </a-col>
-                </a-row>
-                <br/>
                 <a-row style="padding-left: 24px;padding-right: 24px;" v-if="orderData && orderData.video != null">
                   <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">视频</span></a-col>
                   <a-col :span="24">
@@ -390,7 +372,6 @@
 <!--                  v-for="(step, index) in repairSteps"-->
 <!--                  :key="step.id"-->
 <!--                  :color="getStepColor(step.status)">-->
-<!--                  <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>-->
 <!--                  <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>-->
 <!--                  <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>-->
 <!--                </a-timeline-item>-->
@@ -758,7 +739,6 @@ export default {
         this.staffInfo = r.data.staff
         this.evaluateInfo = r.data.evaluate
         this.imagesInit(this.orderInfo.images)
-        this.flawImagesInit(this.orderInfo.flawImages)
         this.queryQuotationByOrder()
         this.queryRepairStep(orderId)
         setTimeout(() => {

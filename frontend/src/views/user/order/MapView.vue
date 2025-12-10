@@ -44,8 +44,11 @@
                     </a-steps>
                   </div>
                   <div v-if="orderData.status == 2 || orderData.status == 3">
-                    <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">地址</h3>
-                    <div id="areas" style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
+                    <h3
+                      style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+                      地址</h3>
+                    <div id="areas"
+                         style="width: 100%;height: 350px;box-shadow: 3px 3px 3px rgba(0, 0, 0, .2);background:#ec9e3c;color:#fff"></div>
                   </div>
                 </a-card>
               </div>
@@ -300,7 +303,9 @@
           <a-row :gutter="15" style="padding: 20px" v-if="orderData != null">
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px" v-if="orderData.status == 0">
               <div v-if="quotationList && quotationList.length > 0">
-                <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">报价信息</h3>
+                <h3
+                  style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+                  报价信息</h3>
                 <a-list :data-source="quotationList" item-layout="vertical">
                   <a-list-item slot="renderItem" slot-scope="item"
                                style="padding: 20px 0; border-bottom: 1px dashed #e8e8e8;">
@@ -371,14 +376,15 @@
                                     v-for="(step, index) in JSON.parse(item.fixProcessInfo)"
                                     :key="step.id"
                                     :color="getStepColor(step.status)">
-                                    <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>
                                     <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
                                     <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
                                     <p v-if="step.itemPrice" style="margin-top: 8px;">
-                                  <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                                  <span
+                                    style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
                                     预计价格: {{ step.itemPrice }} 元
                                   </span>
-                                      <span v-if="step.workHours" style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                                      <span v-if="step.workHours"
+                                            style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
                                     预计工时: {{ step.workHours }} 时
                                   </span>
                                     </p>
@@ -488,7 +494,8 @@
                 </a-list>
               </div>
               <div v-if="endAddressInfo != null && orderData.deliveryDate == null" style="margin-top: 15px">
-                <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+                <h3
+                  style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
                   送寄地址
                 </h3>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
@@ -506,24 +513,29 @@
                   </a-col>
                 </a-row>
                 <br/>
-                <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+                <h3
+                  style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
                   物流信息
                 </h3>
                 <a-form :form="logisticsForm" layout="vertical">
                   <a-row :gutter="16">
                     <a-col :span="12">
                       <a-form-item label="物流公司">
-                        <a-input v-decorator="['company', { rules: [{ required: true, message: '请输入物流公司名称' }] }]" placeholder="请输入物流公司名称" />
+                        <a-input
+                          v-decorator="['company', { rules: [{ required: true, message: '请输入物流公司名称' }] }]"
+                          placeholder="请输入物流公司名称"/>
                       </a-form-item>
                     </a-col>
                     <a-col :span="12">
                       <a-form-item label="物流单号">
-                        <a-input v-decorator="['trackingNumber', { rules: [{ required: true, message: '请输入物流单号' }] }]" placeholder="请输入物流单号" />
+                        <a-input
+                          v-decorator="['trackingNumber', { rules: [{ required: true, message: '请输入物流单号' }] }]"
+                          placeholder="请输入物流单号"/>
                       </a-form-item>
                     </a-col>
                     <a-col :span="24">
                       <a-form-item label="备注信息">
-                        <a-textarea v-decorator="['remark']" placeholder="请输入备注信息" :rows="3" />
+                        <a-textarea v-decorator="['remark']" placeholder="请输入备注信息" :rows="3"/>
                       </a-form-item>
                     </a-col>
                   </a-row>
@@ -534,7 +546,8 @@
               </div>
             </a-col>
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px" v-if="repairSteps.length !== 0">
-              <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+              <h3
+                style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
                 装修流程
               </h3>
               <a-timeline style="margin-top: 20px;">
@@ -542,9 +555,22 @@
                   v-for="(step, index) in repairSteps"
                   :key="step.id"
                   :color="getStepColor(step.status)">
-                  <p style="font-size: 14px; margin-bottom: 5px;">{{ step.time }}</p>
                   <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
                   <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
+                  <p v-if="step.itemPrice" style="margin-top: 8px;">
+                     <span
+                       style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                       预计价格: {{ step.itemPrice }} 元
+                     </span>
+                    <span v-if="step.actualItemPrice"
+                          style="font-size: 14px; font-weight: 500; color: #52c41a; padding: 4px 8px; background-color: #f6ffed; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                      实际价格: {{ step.actualItemPrice }} 元
+                    </span>
+                    <span v-if="step.workHours"
+                          style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                      预计工时: {{ step.workHours }} 时
+                    </span>
+                  </p>
                 </a-timeline-item>
               </a-timeline>
             </a-col>

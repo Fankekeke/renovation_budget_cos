@@ -50,15 +50,14 @@ public class MessageInfoController {
     }
 
     /**
-     * 设置系统消息已读
+     * 删除系统消息
      *
      * @param ids
      * @return
      */
     @DeleteMapping("/{ids}")
     public R deleteByIds(@PathVariable("ids") List<Integer> ids) {
-        return R.ok(messageInfoService.update(Wrappers.<MessageInfo>lambdaUpdate().set(MessageInfo::getReadStatus, 1)
-                .in(MessageInfo::getId, ids)));
+        return R.ok(messageInfoService.removeByIds(ids));
     }
 
 }
