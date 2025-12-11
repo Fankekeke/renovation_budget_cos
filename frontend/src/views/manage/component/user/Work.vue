@@ -83,7 +83,7 @@
                   </a-col>
 
                   <!-- 装修难度 -->
-                  <a-col :span="6" v-if="form.getFieldValue('orderType') === '1'">
+                  <a-col :span="6">
                     <a-form-item label='装修难度' v-bind="formItemLayout">
                       <a-select v-decorator="['fixDifficulty']">
                         <a-select-option value="1">轻度</a-select-option>

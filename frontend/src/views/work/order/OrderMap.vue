@@ -95,7 +95,7 @@
                     <a-col :span="8"><b>折扣后价格：</b>
                       {{ orderInfo.afterOrderPrice ? orderInfo.afterOrderPrice : '- -' }}元
                     </a-col>
-                    <a-col :span="8" v-if="orderData.orderType == 1"><b>装修难度：</b>
+                    <a-col :span="8"><b>装修难度：</b>
                       <span v-if="orderData.fixDifficulty == 1">轻度</span>
                       <span v-if="orderData.fixDifficulty == 2">中度</span>
                       <span v-if="orderData.fixDifficulty == 3">复杂</span>
@@ -182,7 +182,7 @@
                 <br/>
                 <div style="font-size: 13px;font-family: SimHei" v-if="endAddressInfo !== null">
                   <a-row style="padding-left: 24px;padding-right: 24px;">
-                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">送寄地址</span></a-col>
+                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">详细地址</span></a-col>
                     <a-col :span="24"><b>详细地址：</b>
                       {{ endAddressInfo.address }}
                     </a-col>
@@ -386,14 +386,18 @@
                   <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
                   <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
                   <p v-if="step.itemPrice" style="margin-top: 8px;">
-                                          <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
-                                            预计价格: {{ step.itemPrice }} 元
-                                          </span>
+                    <span style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                      预计价格: {{ step.itemPrice }} 元
+                    </span>
+                    <span v-if="step.actualItemPrice && orderData.finishDate != null"
+                          style="font-size: 14px; font-weight: 500; color: #52c41a; padding: 4px 8px; background-color: #f6ffed; border-radius: 4px; display: inline-block; margin-left: 8px;">
+                      实际价格: {{ step.actualItemPrice }} 元
+                    </span>
                     <span v-if="step.workHours" style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block; margin-left: 8px;">
-                                            预计工时: {{ step.workHours }} 时
-                                          </span>
+                      预计工时: {{ step.workHours }} 时
+                    </span>
                   </p>
-                  <div v-if="orderData.status == 2">
+                  <div v-if="orderData.status == 2 && orderData.finishDate == null">
                     <div style="margin-top: 10px;">
                       <a-input-number
                         v-model="step.actualItemPrice"
@@ -403,12 +407,14 @@
                       />
                       <a-button type="primary" @click="submitactualItemPrice(step)">提交</a-button>
                     </div>
-<!--                    <div v-else style="margin-top: 10px;">-->
-<!--                      <span style="font-weight: bold; color: #52c41a;">实际花费: {{ step.actualItemPrice }} 元</span>-->
-<!--                    </div>-->
                   </div>
                 </a-timeline-item>
               </a-timeline>
+              <div style="margin-top: 20px; text-align: right;" v-if="orderData.status == 2 && allActualPricesFilled && orderData.finishDate == null">
+                <a-button type="primary" @click="completeRepair">
+                  装修完成
+                </a-button>
+              </div>
 <!--              <div style="margin-top: 20px; text-align: right;" v-if="orderData.finishDate == null">-->
 <!--                <a-button type="primary" v-if="repairSteps.length > 0" @click="completeRepair">-->
 <!--                  装修完成-->
@@ -551,7 +557,17 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUser: state => state.account.user
+      currentUser: state => state.account.user,
+      allActualPricesFilled() {
+        if (!this.repairSteps || this.repairSteps.length === 0) {
+          return false;
+        }
+        return this.repairSteps.every(step =>
+          step.actualItemPrice !== undefined &&
+          step.actualItemPrice !== null &&
+          step.actualItemPrice >= 0
+        );
+      }
     })
   },
   watch: {

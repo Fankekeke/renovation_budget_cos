@@ -91,7 +91,7 @@
                     <a-col :span="8"><b>折扣后价格：</b>
                       {{ orderInfo.afterOrderPrice ? orderInfo.afterOrderPrice : '- -' }}元
                     </a-col>
-                    <a-col :span="8" v-if="orderData.orderType == 1"><b>装修难度：</b>
+                    <a-col :span="8"><b>装修难度：</b>
                       <span v-if="orderData.fixDifficulty == 1">轻度</span>
                       <span v-if="orderData.fixDifficulty == 2">中度</span>
                       <span v-if="orderData.fixDifficulty == 3">复杂</span>
@@ -179,7 +179,7 @@
                 <br/>
                 <div style="font-size: 13px;font-family: SimHei" v-if="endAddressInfo !== null">
                   <a-row style="padding-left: 24px;padding-right: 24px;">
-                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">送寄地址</span></a-col>
+                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">详细地址</span></a-col>
                     <a-col :span="24"><b>详细地址：</b>
                       {{ endAddressInfo.address }}
                     </a-col>

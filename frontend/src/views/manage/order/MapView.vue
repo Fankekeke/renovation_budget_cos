@@ -104,7 +104,7 @@
                     <a-col :span="8"><b>折扣后价格：</b>
                       {{ orderInfo.afterOrderPrice ? orderInfo.afterOrderPrice : '- -' }}元
                     </a-col>
-                    <a-col :span="8" v-if="orderData.orderType == 1"><b>装修难度：</b>
+                    <a-col :span="8"><b>装修难度：</b>
                       <span v-if="orderData.fixDifficulty == 1">轻度</span>
                       <span v-if="orderData.fixDifficulty == 2">中度</span>
                       <span v-if="orderData.fixDifficulty == 3">复杂</span>
@@ -195,7 +195,7 @@
                 <br/>
                 <div style="font-size: 13px;font-family: SimHei" v-if="endAddressInfo !== null">
                   <a-row style="padding-left: 24px;padding-right: 24px;">
-                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">送寄地址</span>
+                    <a-col style="margin-bottom: 15px"><span style="font-size: 15px;font-weight: 650;color: #000c17">详细地址</span>
                     </a-col>
                     <a-col :span="24"><b>详细地址：</b>
                       {{ endAddressInfo.address }}
@@ -296,7 +296,7 @@
             </div>
           </div>
         </a-col>
-        <a-col :span="15" style="height: 100%;background: #f8f8f8">
+        <a-col :span="15" style="height: 100vh;background: #f8f8f8;overflow-y: auto;overflow-x: hidden">
           <a-row :gutter="15" style="padding: 20px" v-if="orderData != null">
             <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px" v-if="orderData.status == 0">
               <div v-if="quotationList && quotationList.length > 0">
@@ -443,7 +443,7 @@
               </div>
               <div v-if="endAddressInfo != null && orderData.deliveryDate == null" style="margin-top: 15px">
                 <h3 style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
-                  送寄地址
+                  详细地址
                 </h3>
                 <a-row style="padding-left: 24px;padding-right: 24px;">
                   <a-col :span="24">
@@ -473,8 +473,130 @@
                   :color="getStepColor(step.status)">
                   <p style="font-size: 16px; font-weight: 500; color: #000c17;">{{ step.title }}</p>
                   <p style="font-size: 13px; color: #8c8c8c;">{{ step.description }}</p>
+
+                  <!-- 预算花费展示 -->
+                  <div v-if="step.itemPrice || step.workHours" style="margin-top: 8px;">
+                    <div v-if="step.itemPrice" style="display: inline-block; margin-right: 8px;">
+                      <span
+                        style="font-size: 14px; font-weight: 500; color: #ff4d4f; padding: 4px 8px; background-color: #fff1f0; border-radius: 4px; display: inline-block;">
+                        预算费用: {{ step.itemPrice }} 元
+                      </span>
+                    </div>
+
+                    <div v-if="step.workHours" style="display: inline-block;">
+                      <span
+                        style="font-size: 14px; font-weight: 500; color: #1890ff; padding: 4px 8px; background-color: #e6f7ff; border-radius: 4px; display: inline-block;">
+                        预计工时: {{ step.workHours }} 时
+                      </span>
+                    </div>
+
+                    <!-- 实际花费展示 -->
+                    <div v-if="step.actualItemPrice !== undefined && step.actualItemPrice !== null"
+                         style="margin-top: 8px;display: inline-block;margin-left: 8px">
+                      <span
+                        style="font-size: 14px; font-weight: 500; color: #52c41a; padding: 4px 8px; background-color: #f6ffed; border-radius: 4px; display: inline-block;">
+                        实际费用: {{ step.actualItemPrice }} 元
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- 花费对比 -->
+                  <div v-if="step.itemPrice && step.actualItemPrice !== undefined && step.actualItemPrice !== null"
+                       style="margin-top: 10px; padding: 12px; border-radius: 8px; background-color: #f5f5f5;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div style="font-size: 14px; font-weight: 500;">
+                        <span style="color: #666;">费用对比</span>
+                      </div>
+                      <div :style="{
+      fontSize: '14px',
+      fontWeight: '600',
+      color: step.actualItemPrice > step.itemPrice ? '#ff4d4f' : '#52c41a'
+    }">
+                        {{ step.actualItemPrice > step.itemPrice ? '↑ 超支' : '↓ 节约' }}
+                      </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                      <div style="font-size: 13px;">
+                        <div style="color: #8c8c8c;">预算费用</div>
+                        <div style="color: #ff4d4f; font-weight: 500;">¥{{ step.itemPrice }}</div>
+                      </div>
+                      <div style="font-size: 13px;">
+                        <div style="color: #8c8c8c;">实际费用</div>
+                        <div style="color: #1890ff; font-weight: 500;">¥{{ step.actualItemPrice }}</div>
+                      </div>
+                      <div style="font-size: 13px;">
+                        <div style="color: #8c8c8c;">差额</div>
+                        <div :style="{
+        color: step.actualItemPrice > step.itemPrice ? '#ff4d4f' : '#52c41a',
+        fontWeight: '500'
+      }">
+                          ¥{{ Math.abs(step.actualItemPrice - step.itemPrice).toFixed(2) }}
+                        </div>
+                      </div>
+                    </div>
+
+                    <a-progress
+                      :percent="(Math.min(step.actualItemPrice, step.itemPrice) / Math.max(step.actualItemPrice, step.itemPrice)) * 100"
+                      :status="step.actualItemPrice > step.itemPrice ? 'exception' : 'success'"
+                      :show-info="false" style="margin-top: 8px;"
+                    />
+
+                    <div style="text-align: right; margin-top: 4px; font-size: 12px; color: #8c8c8c;">
+                      占比: {{
+                        ((Math.min(step.actualItemPrice, step.itemPrice) / Math.max(step.actualItemPrice, step.itemPrice)) * 100).toFixed(1)
+                      }}%
+                    </div>
+                  </div>
                 </a-timeline-item>
               </a-timeline>
+            </a-col>
+            <a-col :span="24" style="margin-top: 15px;background: #fff;padding: 20px"
+                   v-if="orderData.status == 3 && series.length > 0">
+              <h3
+                style="font-size: 18px; font-weight: 650; color: #000c17; margin-bottom: 20px; border-left: 4px solid #1890ff; padding-left: 10px;">
+                装修费用对比分析
+              </h3>
+              <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart>
+
+              <!-- 添加费用汇总信息 -->
+              <div style="margin-top: 20px; display: flex; justify-content: space-around; text-align: center;">
+                <div style="padding: 15px; background-color: #fff1f0; border-radius: 4px;">
+                  <div style="font-size: 14px; color: #ff4d4f;">总预算费用</div>
+                  <div style="font-size: 20px; font-weight: bold; color: #ff4d4f;">
+                    ¥{{ repairSteps.reduce((sum, step) => sum + (parseFloat(step.itemPrice) || 0), 0).toFixed(2) }}
+                  </div>
+                </div>
+                <div style="padding: 15px; background-color: #f0f5ff; border-radius: 4px;">
+                  <div style="font-size: 14px; color: #1890ff;">总实际费用</div>
+                  <div style="font-size: 20px; font-weight: bold; color: #1890ff;">
+                    ¥{{
+                      repairSteps.reduce((sum, step) => sum + (parseFloat(step.actualItemPrice) || 0), 0).toFixed(2)
+                    }}
+                  </div>
+                </div>
+                <div :style="{
+      padding: '15px',
+      backgroundColor: getTotalCostDifference() >= 0 ? '#fff1f0' : '#f6ffed',
+      borderRadius: '4px'
+    }">
+                  <div :style="{fontSize: '14px', color: getTotalCostDifference() >= 0 ? '#ff4d4f' : '#52c41a'}">
+                    {{ getTotalCostDifference() >= 0 ? '总超支' : '总节约' }}
+                  </div>
+                  <div
+                    :style="{fontSize: '20px', fontWeight: 'bold', color: getTotalCostDifference() >= 0 ? '#ff4d4f' : '#52c41a'}">
+                    ¥{{ Math.abs(getTotalCostDifference()).toFixed(2) }}
+                  </div>
+                </div>
+              </div>
+            </a-col>
+            <a-col :span="12" style="margin-top: 15px;background: #fff;padding: 20px"
+                   v-if="orderData.status == 3 && series1.length > 0">
+              <apexchart type="pie" width="380" :options="chartOptions1" :series="series1"></apexchart>
+            </a-col>
+            <a-col :span="12" style="margin-top: 15px;background: #fff;padding: 20px"
+                   v-if="orderData.status == 3 && series2.length > 0">
+              <apexchart type="pie" width="380" :options="chartOptions2" :series="series2"></apexchart>
             </a-col>
           </a-row>
         </a-col>
@@ -509,6 +631,102 @@ export default {
   },
   data () {
     return {
+      series: [],
+      chartOptions: {
+        chart: {
+          height: 350,
+          type: 'bar',
+          stacked: false
+        },
+        dataLabels: {
+          enabled: true
+        },
+        stroke: {
+          width: 2
+        },
+        xaxis: {
+          categories: [] // 将根据 repairSteps 动态填充
+        },
+        yaxis: [
+          {
+            axisTicks: {
+              show: true
+            },
+            axisBorder: {
+              show: true,
+              color: '#008FFB'
+            },
+            labels: {
+              style: {
+                colors: '#008FFB'
+              }
+            },
+            title: {
+              text: '金额 (元)',
+              style: {
+                color: '#008FFB'
+              }
+            }
+          }
+        ],
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return val + ' 元'
+            }
+          }
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right'
+        }
+      },
+      series1: [], // 用于预算费用饼图
+      chartOptions1: {
+        chart: {
+          width: 380,
+          type: 'pie'
+        },
+        labels: [], // 将根据 repairSteps 动态填充
+        title: {
+          text: '预算费用分布',
+          align: 'center'
+        },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      },
+      series2: [], // 用于实际费用饼图
+      chartOptions2: {
+        chart: {
+          width: 380,
+          type: 'pie'
+        },
+        labels: [], // 将根据 repairSteps 动态填充
+        title: {
+          text: '实际费用分布',
+          align: 'center'
+        },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      },
       repairSteps: [],
       logisticsForm: this.$form.createForm(this),
       rowId: null,
@@ -566,7 +784,28 @@ export default {
   },
   computed: {
     ...mapState({
-      currentUser: state => state.account.user
+      currentUser: state => state.account.user,
+      repairStepsWithCosts () {
+        if (!this.repairSteps || this.repairSteps.length === 0) {
+          return []
+        }
+
+        return this.repairSteps.map(step => {
+          const item = {...step}
+
+          // 计算预算花费总额（如果有多个费用项）
+          if (step.itemPrice) {
+            item.budgetTotal = parseFloat(step.itemPrice)
+          }
+
+          // 实际花费总额
+          if (step.actualItemPrice) {
+            item.actualTotal = parseFloat(step.actualItemPrice)
+          }
+
+          return item
+        })
+      }
     })
   },
   watch: {
@@ -577,6 +816,98 @@ export default {
     }
   },
   methods: {
+    updateCostPieCharts () {
+      if (!this.repairSteps || this.repairSteps.length === 0) {
+        return
+      }
+      // 过滤出有预算或实际花费的步骤
+      const stepsWithData = this.repairSteps.filter(step =>
+        (step.itemPrice && parseFloat(step.itemPrice) > 0) ||
+        (step.actualItemPrice !== undefined && step.actualItemPrice !== null && parseFloat(step.actualItemPrice) > 0)
+      )
+      if (stepsWithData.length === 0) {
+        return
+      }
+      // 准备预算费用饼图数据
+      const budgetLabels = stepsWithData
+        .filter(step => step.itemPrice && parseFloat(step.itemPrice) > 0)
+        .map(step => step.title)
+      const budgetSeries = stepsWithData
+        .filter(step => step.itemPrice && parseFloat(step.itemPrice) > 0)
+        .map(step => parseFloat(step.itemPrice))
+
+      // 准备实际费用饼图数据
+      const actualLabels = stepsWithData
+        .filter(step => step.actualItemPrice !== undefined && step.actualItemPrice !== null && parseFloat(step.actualItemPrice) > 0)
+        .map(step => step.title)
+      const actualSeries = stepsWithData
+        .filter(step => step.actualItemPrice !== undefined && step.actualItemPrice !== null && parseFloat(step.actualItemPrice) > 0)
+        .map(step => parseFloat(step.actualItemPrice))
+      // 更新图表数据
+      this.series1 = budgetSeries
+      this.chartOptions1 = {
+        ...this.chartOptions1,
+        labels: budgetLabels
+      }
+      this.series2 = actualSeries
+      this.chartOptions2 = {
+        ...this.chartOptions2,
+        labels: actualLabels
+      }
+    },
+    updateCostChart () {
+      if (!this.repairSteps || this.repairSteps.length === 0) {
+        return
+      }
+      // 过滤出有预算或实际花费的步骤
+      const stepsWithData = this.repairSteps.filter(step =>
+        (step.itemPrice && parseFloat(step.itemPrice) > 0) ||
+        (step.actualItemPrice !== undefined && step.actualItemPrice !== null && parseFloat(step.actualItemPrice) >= 0)
+      )
+      if (stepsWithData.length === 0) {
+        return
+      }
+      // 准备图表数据
+      const categories = stepsWithData.map(step => step.title)
+      const budgetData = stepsWithData.map(step =>
+        step.itemPrice ? parseFloat(step.itemPrice) : 0
+      )
+      const actualData = stepsWithData.map(step =>
+        (step.actualItemPrice !== undefined && step.actualItemPrice !== null)
+          ? parseFloat(step.actualItemPrice) : 0
+      )
+      // 更新图表数据
+      this.series = [
+        {
+          name: '预算费用',
+          type: 'column',
+          data: budgetData
+        },
+        {
+          name: '实际费用',
+          type: 'column',
+          data: actualData
+        }
+      ]
+      // 更新图表选项中的分类
+      this.chartOptions = {
+        ...this.chartOptions,
+        xaxis: {
+          categories: categories
+        }
+      }
+    },
+    getTotalCostDifference () {
+      if (!this.repairStepsWithCosts || this.repairStepsWithCosts.length === 0) {
+        return 0
+      }
+      const totalBudget = this.repairStepsWithCosts.reduce((sum, step) =>
+        sum + (parseFloat(step.itemPrice) || 0), 0)
+      const totalActual = this.repairStepsWithCosts.reduce((sum, step) =>
+        sum + (parseFloat(step.actualItemPrice) || 0), 0)
+
+      return totalActual - totalBudget
+    },
     getStepColor (status) {
       switch (status) {
         case 'completed':
@@ -594,8 +925,15 @@ export default {
         if (r.data.msg) {
           let repairStep = JSON.parse(r.data.msg)
           this.repairSteps = repairStep
+
+          if (this.orderData.status == 3) {
+            // 更新费用图表
+            this.updateCostChart()
+            // 更新费用饼图
+            this.updateCostPieCharts()
+          }
         } else {
-          let repairStep = []
+          this.repairStep = []
         }
       })
     },
